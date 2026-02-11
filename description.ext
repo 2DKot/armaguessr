@@ -1,0 +1,58 @@
+// =============================================
+// ArmaGuessr - Multiplayer Navigation Game
+// =============================================
+
+author = "ArmaGuessr";
+onLoadName = "ArmaGuessr";
+onLoadMission = "Guess the location!";
+
+// Respawn
+respawn = "BASE";
+respawnDelay = 3;
+respawnDialog = 0;
+
+// Disable revive
+disabledAI = 1;
+
+// =============================================
+// CfgFunctions
+// =============================================
+class CfgFunctions
+{
+    class GG
+    {
+        class Functions
+        {
+            file = "functions\GG";
+            class startRound {};
+            class prepareClient {};
+            class confirmGuess {};
+            class receiveGuess {};
+            class endRound {};
+            class showResults {};
+            class resetClientState {};
+            class showFinalScores {};
+        };
+    };
+};
+
+// =============================================
+// Mission Parameters (Lobby)
+// =============================================
+class Params
+{
+    class RoundDuration
+    {
+        title = "Round Duration (seconds)";
+        values[] = {60, 90, 120, 180, 240};
+        texts[] = {"60s", "90s", "120s", "180s", "240s"};
+        default = 120;
+    };
+    class TotalRounds
+    {
+        title = "Number of Rounds";
+        values[] = {3, 5, 7, 10};
+        texts[] = {"3", "5", "7", "10"};
+        default = 5;
+    };
+};
