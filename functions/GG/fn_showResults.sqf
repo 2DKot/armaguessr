@@ -34,8 +34,6 @@ _realMarker setMarkerTextLocal "Real Position";
 _realMarker setMarkerSizeLocal [1.2, 1.2];
 GG_resultMarkers pushBack _realMarker;
 
-// Medal colors for top 3
-private _colors = ["ColorYellow", "ColorGrey", "ColorOrange"];
 private _medals = ["[1st]", "[2nd]", "[3rd]"];
 
 // Build hint text
@@ -56,12 +54,7 @@ private _hintText = format ["--- Round %1 Results ---\n\n", _roundNumber];
         _marker setMarkerTextLocal format ["%1 (%2m)", _name, round _distance];
         GG_resultMarkers pushBack _marker;
 
-        // Color: top 3 get special colors, rest are red
-        if (_forEachIndex < 3) then {
-            _marker setMarkerColorLocal (_colors select _forEachIndex);
-        } else {
-            _marker setMarkerColorLocal "ColorRed";
-        };
+        _marker setMarkerColorLocal "ColorYellow";
 
         // Line from guess to real position (marker centered at midpoint)
         private _lineName = format ["GG_line_%1", _uid];
@@ -78,11 +71,7 @@ private _hintText = format ["--- Round %1 Results ---\n\n", _roundNumber];
         _lineMarker setMarkerBrushLocal "SolidFull";
         GG_resultMarkers pushBack _lineMarker;
 
-        if (_forEachIndex < 3) then {
-            _lineMarker setMarkerColorLocal (_colors select _forEachIndex);
-        } else {
-            _lineMarker setMarkerColorLocal "ColorRed";
-        };
+        _lineMarker setMarkerColorLocal "ColorYellow";
         _lineMarker setMarkerAlphaLocal 0.4;
     };
 

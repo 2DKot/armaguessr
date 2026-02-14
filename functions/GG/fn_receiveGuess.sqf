@@ -2,6 +2,7 @@
 // GG_fnc_receiveGuess - Server Only
 // Receive and validate a player's guess
 // If all players submitted, end round early
+// If rush mode: first confirm sets 10s timer
 // Called with: [_player, _guessPos]
 // =============================================
 if (!isServer) exitWith {};
@@ -46,4 +47,17 @@ if (_allSubmitted && count _allPlayers > 0) then {
     diag_log "ArmaGuessr: All players confirmed - ending round early!";
     GG_roundEndTime = serverTime;
     publicVariable "GG_roundEndTime";
+} else {
+    // Rush mode: first confirm sets timer to 10s if more time remains
+    if (GG_rushMode == 1 && count GG_submittedPlayers == 1) then {
+        private _timeLeft = GG_roundEndTime - serverTime;
+        if (_timeLeft > 10) then {
+            diag_log format ["ArmaGuessr: Rush mode - %1 confirmed first! Setting 10s timer.", _name];
+            GG_roundEndTime = serverTime + 10;
+            publicVariable "GG_roundEndTime";
+
+            // Notify all clients about the rush
+            [format ["%1 confirmed! 10 seconds remaining!", _name]] remoteExec ["systemChat", 0];
+        };
+    };
 };

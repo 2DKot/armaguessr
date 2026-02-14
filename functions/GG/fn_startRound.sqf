@@ -13,6 +13,17 @@ diag_log format ["ArmaGuessr: Starting round %1 / %2", GG_roundNumber, GG_totalR
 GG_allGuesses = [];
 GG_submittedPlayers = [];
 
+// Clean up vehicles and objects from previous round
+if (!isNil "GG_spawnedQuads") then {
+    { if (!isNull _x) then { deleteVehicle _x; }; } forEach GG_spawnedQuads;
+};
+GG_spawnedQuads = [];
+
+if (!isNil "GG_spawnedObjects") then {
+    { if (!isNull _x) then { deleteVehicle _x; }; } forEach GG_spawnedObjects;
+};
+GG_spawnedObjects = [];
+
 // Generate random position on land
 private _worldSize = worldSize;
 private _pos = [0,0,0];
@@ -50,6 +61,45 @@ publicVariable "GG_roundEndTime";
 
 // Tell all clients to prepare (send them the position for teleport)
 [GG_roundPos, GG_roundNumber] remoteExec ["GG_fnc_prepareClient", 0, true];
+
+// Spawn colored smoke at the round position so players can find their way back
+private _smoke = "SmokeShellGreen" createVehicle _pos;
+if (isNil "GG_spawnedObjects") then { GG_spawnedObjects = []; };
+GG_spawnedObjects pushBack _smoke;
+
+// Respawn smoke periodically (smoke grenades expire after ~45s)
+private _smokePos = +_pos;
+[_smokePos] spawn {
+    params ["_smokePos"];
+    while {serverTime < GG_roundEndTime && !GG_missionEnded} do {
+        sleep 40;
+        if (serverTime < GG_roundEndTime && !GG_missionEnded) then {
+            private _newSmoke = "SmokeShellGreen" createVehicle _smokePos;
+            GG_spawnedObjects pushBack _newSmoke;
+        };
+    };
+};
+
+// Spawn quad bikes if enabled
+if (GG_quadBikes == 1) then {
+    private _players = allPlayers - (entities "HeadlessClient_F");
+    {
+        private _dir = (_forEachIndex / (count _players max 1)) * 360;
+        private _dist = 3 + random 3;
+        private _spawnPos = [
+            (_pos select 0) + (sin _dir) * _dist,
+            (_pos select 1) + (cos _dir) * _dist,
+            0
+        ];
+
+        private _quad = "B_Quadbike_01_F" createVehicle _spawnPos;
+        _quad setDir (random 360);
+        _quad allowDamage false;
+        GG_spawnedQuads pushBack _quad;
+
+        diag_log format ["ArmaGuessr: Spawned quad bike at %1 for %2", _spawnPos, name _x];
+    } forEach _players;
+};
 
 // Wait for round to end
 [] spawn {

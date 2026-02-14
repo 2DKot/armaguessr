@@ -55,4 +55,18 @@ class Params
         texts[] = {"3", "5", "7", "10"};
         default = 5;
     };
+    class RushMode
+    {
+        title = "Rush Mode (first confirm sets 10s timer for others)";
+        values[] = {0, 1};
+        texts[] = {"Off", "On"};
+        default = 1;
+    };
+    class QuadBikes
+    {
+        title = "Quad Bikes (spawn ATV for each player)";
+        values[] = {0, 1};
+        texts[] = {"Off", "On"};
+        default = 0;
+    };
 };
